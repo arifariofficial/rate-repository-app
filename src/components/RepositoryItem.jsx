@@ -52,6 +52,11 @@ const styles = StyleSheet.create({
 });
 
 const RepositoryItem = ({ item }) => {
+  const formatNumber = (value) => {
+    if (value >= 1000) return `${(value / 1000).toFixed(1)}k`;
+    return value;
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -59,30 +64,45 @@ const RepositoryItem = ({ item }) => {
           <Image source={{ uri: item.ownerAvatarUrl }} style={styles.pic} />
         </View>
         <View style={styles.picInfoContainer}>
-          <Text style={{ fontWeight: "bold", fontSize: theme.fontSizes.subheading }}>
+          <Text
+            testID="repoFullName"
+            style={{ fontWeight: "bold", fontSize: theme.fontSizes.subheading }}
+          >
             {item.fullName}
           </Text>
-          <Text style={{ padding: 5, width: 320 }}>{item.description}</Text>
+          <Text testID="repoDescription" style={{ padding: 5, width: 320 }}>
+            {item.description}
+          </Text>
           <View style={styles.language}>
-            <Text style={styles.languageText}>{item.language}</Text>
+            <Text testID="repoLanguage" style={styles.languageText}>
+              {item.language}
+            </Text>
           </View>
         </View>
       </View>
       <View style={styles.buttomContainer}>
         <View style={styles.various}>
-          <Text style={{ fontWeight: "bold" }}>{item.stargazersCount}</Text>
+          <Text testID="repoStars" style={{ fontWeight: "bold" }}>
+            {formatNumber(item.stargazersCount)}
+          </Text>
           <Text>Stars</Text>
         </View>
         <View style={styles.various}>
-          <Text style={{ fontWeight: "bold" }}>{item.forksCount}</Text>
+          <Text testID="repoForks" style={{ fontWeight: "bold" }}>
+            {formatNumber(item.forksCount)}
+          </Text>
           <Text>Forks</Text>
         </View>
         <View style={styles.various}>
-          <Text style={{ fontWeight: "bold" }}>{item.reviewCount}</Text>
+          <Text testID="repoReviews" style={{ fontWeight: "bold" }}>
+            {formatNumber(item.reviewCount)}
+          </Text>
           <Text>Reviwes</Text>
         </View>
         <View style={styles.various}>
-          <Text style={{ fontWeight: "bold" }}>{item.reviewCount}</Text>
+          <Text testID="repoRating" style={{ fontWeight: "bold" }}>
+            {formatNumber(item.ratingAverage)}
+          </Text>
           <Text>Rating</Text>
         </View>
       </View>

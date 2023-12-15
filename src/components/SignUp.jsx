@@ -1,11 +1,11 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import FormikTextInput from "./FormikTextInput";
+import theme from "../theme";
 import Text from "./Text";
 import { Formik } from "formik";
-import theme from "../theme";
 import * as yup from "yup";
-import useSignIn from "../hooks/useSignIn";
-import { useNavigate } from "react-router-native";
+import { ref } from "yup";
+import useSignUp from "../hooks/useSignUp";
 
 const styles = StyleSheet.create({
   container: {
@@ -28,13 +28,18 @@ const styles = StyleSheet.create({
   },
 });
 
-const SignInForm = ({ onSubmit }) => {
+const SignUpForm = ({ onSubmit }) => {
   return (
     <View style={styles.container}>
       <FormikTextInput name="username" placeholder="Username" secureTextEntry={false} />
       <FormikTextInput name="password" placeholder="Password" secureTextEntry={true} />
+      <FormikTextInput
+        name="passwordConfirmation"
+        placeholder="Password confirmation"
+        secureTextEntry={true}
+      />
       <Pressable onPress={onSubmit} style={styles.signInButtonContainer}>
-        <Text style={styles.signInButton}>Sign in</Text>
+        <Text style={styles.signInButton}>Sign Up</Text>
       </Pressable>
     </View>
   );
@@ -46,6 +51,10 @@ const validationSchema = yup.object().shape({
     .required("Username is required")
     .min(1, "Username must be greated or equal to 1"),
   password: yup.string().required("Password is  required").min(6, "Password must be 6 digits"),
+  passwordConfirmation: yup
+    .string()
+    .oneOf([ref("password")], "password don't match")
+    .required("Password confirmation is  required"),
 });
 
 const initialValues = {
@@ -53,33 +62,25 @@ const initialValues = {
   password: "",
 };
 
-export const SignInContainer = ({ onSubmit }) => {
-  return (
-    <>
-      <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
-        {({ handleSubmit }) => <SignInForm onSubmit={handleSubmit} />}
-      </Formik>
-    </>
-  );
-};
-
-const SignIn = () => {
-  const [signIn] = useSignIn();
-
-  const navigate = useNavigate();
+const SignUp = () => {
+  const [signUp] = useSignUp();
 
   const onSubmit = async (values) => {
     const { username, password } = values;
 
     try {
-      const { data } = await signIn({ username, password });
-      if (data) navigate("/");
+      const { data } = await signUp({ username, password });
       console.log(data);
     } catch (e) {
       console.log(e);
     }
   };
-  return <SignInContainer onSubmit={onSubmit} />;
+
+  return (
+    <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
+      {({ handleSubmit }) => <SignUpForm onSubmit={handleSubmit} />}
+    </Formik>
+  );
 };
 
-export default SignIn;
+export default SignUp;
